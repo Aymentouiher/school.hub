@@ -2,31 +2,33 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Les attributs qu'on peut remplir
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name',         // Laravel
+        'email',        // Laravel  
+        'password',     // Laravel
+        // TES attributs :
+        'nom',
+        'prenom',
+        'role',
+        'matricule',
+        'date_naissance',
+        'specialite',
+        'telephone',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Les attributs à cacher
      */
     protected $hidden = [
         'password',
@@ -34,15 +36,56 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Conversion des types
      */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_naissance' => 'date', // Convertit automatiquement en date
         ];
+    }
+
+    // ============= TES MÉTHODES =============
+    
+    /**
+     * Vérifie si l'utilisateur est admin
+     */
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+    
+    /**
+     * Vérifie si l'utilisateur est étudiant
+     */
+    public function isEtudiant()
+    {
+        return $this->role === 'etudiant';
+    }
+    
+    /**
+     * Vérifie si l'utilisateur est enseignant
+     */
+    public function isEnseignant()
+    {
+        return $this->role === 'enseignant';
+    }
+    
+    /**
+     * Vérifie si l'utilisateur est parent
+     */
+    public function isParent()
+    {
+        return $this->role === 'parent';
+    }
+    
+    /**
+     * Récupère le nom complet
+     */
+    public function getNomCompletAttribute()
+    {
+        return $this->nom . ' ' . $this->prenom;
     }
 }
